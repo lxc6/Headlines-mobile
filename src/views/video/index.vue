@@ -1,6 +1,6 @@
 <template>
   <div>
-      视频模块
+       <van-nav-bar fixed title="视频列表" left-arrow @click-left="$router.back()"></van-nav-bar>
   </div>
 </template>
 
