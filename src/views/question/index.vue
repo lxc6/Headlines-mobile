@@ -1,6 +1,13 @@
 <template>
   <div>
-      <van-nav-bar fixed title="问答页面" right-arrow @click-left="$router.back()"></van-nav-bar>
+    <div class="split">question</div>
+    <van-skeleton title avatar :row="3" />
+    <div class="split"></div>
+    <van-skeleton title avatar :row="3" />
+    <div class="split"></div>
+    <van-skeleton title avatar :row="3" />
+    <div class="split"></div>
+    <van-skeleton title avatar :row="3" />
   </div>
 </template>
 

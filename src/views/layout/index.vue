@@ -1,10 +1,15 @@
 <template>
   <div class="container">
     <!-- 头部导航栏 -->
-    <van-nav-bar fixed title="黑马头条" right-text="搜索" @click-right="$router.push('/search')"></van-nav-bar>
+    <van-nav-bar fixed
+    v-if="$route.path!=='/user'"
+    title="黑马头条"
+    right-text="搜索"
+    @click-right="$router.push('/search')"
+    ></van-nav-bar>
     <!-- 二级容器 -->
-    <div class="my-wrapper">
-      123131
+    <!-- 判断path为user时padding-top为0 -->
+    <div class="my-wrapper" :class="{noTop: $route.path==='/user'}">
       <router-view></router-view>
     </div>
     <!-- 底部标签栏 -->

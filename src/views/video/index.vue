@@ -1,6 +1,13 @@
 <template>
   <div>
-       <van-nav-bar fixed title="视频列表" left-arrow @click-left="$router.back()"></van-nav-bar>
+    <div class="split">video</div>
+    <van-skeleton title avatar :row="3" />
+    <div class="split"></div>
+    <van-skeleton title avatar :row="3" />
+    <div class="split"></div>
+    <van-skeleton title avatar :row="3" />
+    <div class="split"></div>
+    <van-skeleton title avatar :row="3" />
   </div>
 </template>
 
