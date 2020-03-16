@@ -18,7 +18,7 @@ instance.interceptors.request.use(config => {
 }, error => Promise.reject(error))
 // 响应拦截
 instance.interceptors.response.use(res => {
-  // 脱壳处理 axios默认包裹一层data
+  // 脱壳处理
   try {
     return res.data.data
   } catch (error) {
