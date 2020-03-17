@@ -13,7 +13,7 @@ export default new Vuex.Store({
       auth.setUser(payload.user)// 数据同步到本地存储
     },
     clearUser (state) {
-      state.user = {} // 清空数据
+      state.user = {} // 清空state状态数据
       auth.delUser()// 清除缓存数据
     }
   },
