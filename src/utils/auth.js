@@ -11,8 +11,8 @@ export function setUser (user) {
 // 获取token
 export function getUser () {
   // 返回为对象类型
-  // user为空报错  需要短路表达式 为空时返回空对象
-  return JSON.parse(window.localStorage.getItem(USER_TOKEN) || {})
+  // user为空报错  需要短路表达式 为空时返回 空对象要用引号
+  return JSON.parse(window.localStorage.getItem(USER_TOKEN) || '{}')
 }
 // 删除token
 export function delUser () {

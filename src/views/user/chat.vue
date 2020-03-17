@@ -1,6 +1,6 @@
 <template>
   <div>
-       <van-nav-bar fixed title="小智" left-arrow @click-left="$router.back()"></van-nav-bar>
+       <van-nav-bar  title="小智" left-arrow @click-left="$router.back()"></van-nav-bar>
   </div>
 </template>
 

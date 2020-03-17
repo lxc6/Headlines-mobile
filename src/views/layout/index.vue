@@ -17,8 +17,8 @@
     <van-tabbar route>
       <van-tabbar-item to="/" icon="home-o">主页</van-tabbar-item>
       <van-tabbar-item to="/question" icon="search">问答</van-tabbar-item>
-      <van-tabbar-item to="/video" icon="friends-o">视频</van-tabbar-item>
-      <van-tabbar-item to="/user" icon="setting-o">我的</van-tabbar-item>
+      <van-tabbar-item to="/video" icon="play-circle-o">视频</van-tabbar-item>
+      <van-tabbar-item to="/user" icon="user-o">我的</van-tabbar-item>
     </van-tabbar>
   </div>
 </template>
@@ -40,6 +40,9 @@ export default {}
     padding-top: 46px;
     padding-bottom: 50px;
     box-sizing: border-box;
+    // background: url('../../assets/image/0001.jpg');
+    // background-size: cover;
+    // background: rgba(0,0,0,.1);
     &.noTop{
       padding-top: 0;
     }
