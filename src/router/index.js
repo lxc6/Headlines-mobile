@@ -19,7 +19,6 @@ const SearchResult = () => import('@/views/search/result')
 const routes = [
   {
     path: '/',
-    name: 'Home',
     component: Layout, // 布局组件 一级路由
     children: [{
       path: '', // 如果path什么都不写 默认就是二级路由的默认组件
