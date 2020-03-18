@@ -15,6 +15,7 @@ const instance = axios.create({
 instance.interceptors.request.use(config => {
   // config就是请求的参数 统一注入token
   store.state.user.token && (config.headers.Authorization = `Bearer ${store.state.user.token}`)
+  return config // 返回配置
 }, error => Promise.reject(error))
 // 响应拦截
 instance.interceptors.response.use(res => {

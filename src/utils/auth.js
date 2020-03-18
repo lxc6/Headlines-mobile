@@ -1,6 +1,6 @@
 /*****
  *  auth.js 专门处理 token的读写和删除
- *  create by lixc 2020/3/15
+ *  create by lixc 2020-03-15
  * *****/
 const USER_TOKEN = 'headlines-mobile'// 存储用户信息
 // 设置token

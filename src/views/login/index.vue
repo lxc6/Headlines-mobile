@@ -30,7 +30,7 @@
     <!-- 登录 -->
     <div style="padding:20px">
       <van-button
-        @click="login"
+        @click="checkLogin"
         round
         block
         color="linear-gradient(to right, #4bb0ff, #6149f6)"
@@ -41,7 +41,8 @@
 </template>
 
 <script>
-
+import { login } from '@/api/user.js'
+import { mapMutations } from 'vuex' // 辅助函数用于映射
 export default {
   data () {
     return {
@@ -56,6 +57,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['updataUser']), // 将mutations中方法映射到methods
     // 效验手机号
     checkMobile () {
       // 第一轮 判空
@@ -86,14 +88,26 @@ export default {
       return true
     },
     // 登录效验
-    login () {
-      const ckeckM = this.checkMobile()
+    async checkLogin () {
+      const checkM = this.checkMobile()
       const checkC = this.checkCode()
-      if (ckeckM && checkC) {
-        console.log('验证通过')
+      if (checkM && checkC) {
         // 格式效验完成后 调用接口验证数据
+        try {
+          const res = await login(this.loginForm)
+          this.updataUser({ user: res })// 传入数据进行更新
+          //  判断有 无参数 跳转
+          const { redirectURL } = this.$route.query // query查询参数 也就是 ?后边的参数表
+          this.$router.push(redirectURL || '/')// 短路实现按需跳转
+        } catch (error) {
+          // this.$notify({ message: '手机号码或验证码错误', duration: 1000 })// vant内置消息通知
+          this.$lnotify({ message: '手机号码或验证码错误' })// 自定义方法
+        }
       }
     }
+  },
+  created () {
+    console.log(this.loginForm)
   }
 }
 </script>
