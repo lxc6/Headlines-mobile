@@ -42,8 +42,10 @@ instance.interceptors.response.use(res => {
         })
         // 获取到token 提交mutations 更新vuex状态 更新本地缓存token
         store.commit('updataUser', {
-          token: res.data.data.token,
-          refresh_token: store.state.user.refresh_token
+          user: {
+            token: res.data.data.token,
+            refresh_token: store.state.user.refresh_token
+          }
         })
         return instance(error.config)// 把刚才错误的请求再次发送出去 目的 继续执行这个请求执行链下面的内容
       } catch (error) {
