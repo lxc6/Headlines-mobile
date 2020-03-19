@@ -3,7 +3,7 @@
     <!-- tab标签页 -->
     <van-tabs>
       <van-tab :title="item.name" v-for="item in channels" :key="item.id">
-        <ArticleList></ArticleList>
+        <ArticleList :channel_id="item.id"></ArticleList>
       </van-tab>
     </van-tabs>
     <!-- 综合 -->
