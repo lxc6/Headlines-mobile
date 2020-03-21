@@ -1,8 +1,9 @@
 <template>
   <div class="container">
     <!-- tab标签页 -->
-    <van-tabs>
-      <van-tab :title="item.name" v-for="item in channels" :key="item.id">
+    <!-- 默认绑定激活页签 -->
+    <van-tabs v-model="activeIndex">
+      <van-tab  :title="item.name" v-for="item in channels" :key="item.id">
         <!-- 父组件的自定义事件 -->
         <ArticleList @showAction="openAction" :channel_id="item.id"></ArticleList>
       </van-tab>
@@ -13,15 +14,18 @@
     </span>
     <!-- 弹层 -->
     <van-popup v-model="show" style="width:80%">
-      <MoreActions></MoreActions>
+      <!-- 监听谁就在谁的标签上注册事件 -->
+      <MoreActions @dislike="dislikeArticles"></MoreActions>
     </van-popup>
   </div>
 </template>
 
 <script>
 import ArticleList from './components/article-list'
-import { getChannels } from '@/api/channels.js'
 import MoreActions from './components/more-actions'
+import { getChannels } from '@/api/channels.js'
+import { dislikeArticles } from '@/api/article'
+import eventBus from '@/utils/eventBus'
 export default {
   components: {
     ArticleList,
@@ -30,12 +34,27 @@ export default {
   data () {
     return {
       channels: [],
-      show: false// 是否显示弹层
+      show: false, // 是否显示弹层
+      artId: null,
+      activeIndex: 0// 当前默认激活的页签
     }
   },
   methods: {
-    openAction () {
-      this.show = true
+    openAction (artId) {
+      this.show = true// 方法实现弹层显示与隐藏
+      this.artId = artId
+    },
+    async dislikeArticles () {
+      try {
+        await dislikeArticles({ target: this.artId })// 发送请求  ?后端记录不再推送
+        this.$lnotify({ type: 'success', message: '操作成功' })
+        // 触发事件池 利用广播机制 通知tab 实现删除数据
+        // activeIndex与channel的下标相对应 获取频道id
+        eventBus.$emit('delDislike', this.artId, this.channels[this.activeIndex].id)// 广播001
+        this.show = false// 关闭弹层
+      } catch (error) {
+        this.$lnotify({ message: '操作失败' })// lnotify默认type类型为失败
+      }
     },
     async getChannels () {
       const res = await getChannels()

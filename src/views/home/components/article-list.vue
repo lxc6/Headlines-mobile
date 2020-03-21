@@ -31,8 +31,8 @@
                 <span>{{ item.comm_count }}评论</span>
                 <span>{{ item.pubdate | relTime }}</span>
                 <!-- 判断未登陆时按钮不存在 -->
-                <!-- 触发父组件的自定义事件 -->
-                <span @click="$emit('showAction')" class="close" v-if="user.token">
+                <!-- 触发父组件的自定义事件 需要传出点击的文章id实现后续操作-->
+                <span @click="$emit('showAction',item.art_id.toString())" class="close" v-if="user.token">
                   <van-icon name="cross"></van-icon>
                 </span>
               </div>
@@ -48,7 +48,22 @@
 <script>
 import { getArticles } from '@/api/article'
 import { mapState } from 'vuex'
+import eventBus from '@/utils/eventBus'
 export default {
+  created () {
+    // 监听广播 广播001
+    eventBus.$on('delDislike', (artId, channelId) => {
+      if (channelId === this.channel_id) { // 判断频道id
+        const index = this.articles.findIndex(item => item.art_id.toString() === artId)
+        if (index > -1) { // index从零开始
+          this.articles.splice(index, 1)
+        }
+        if (this.articles.length === 0) { // 删光
+          this.onLoad()// 手动触发添加数据
+        }
+      }
+    })
+  },
   computed: {
     ...mapState(['user'])// 映射出state中的user用于判断有无  × 按钮
   },
