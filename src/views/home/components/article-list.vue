@@ -52,7 +52,7 @@ import eventBus from '@/utils/eventBus'
 export default {
   created () {
     // 监听广播 广播001
-    eventBus.$on('delDislike', (artId, channelId) => {
+    eventBus.$on('delArticle', (artId, channelId) => {
       if (channelId === this.channel_id) { // 判断频道id
         const index = this.articles.findIndex(item => item.art_id.toString() === artId)
         if (index > -1) { // index从零开始

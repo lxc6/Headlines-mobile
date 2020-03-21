@@ -14,8 +14,9 @@
     </span>
     <!-- 弹层 -->
     <van-popup v-model="show" style="width:80%">
-      <!-- 监听谁就在谁的标签上注册事件 -->
-      <MoreActions @dislike="dislikeArticles"></MoreActions>
+      <!-- 监听谁就在谁的标签上注册事件 dislike操作参数  $evnet为事件参数由子组件传过来 -->
+      <MoreActions @dislike="dislikeOrReport('dislike')"
+      @report="dislikeOrReport('report',$event)"></MoreActions>
     </van-popup>
   </div>
 </template>
@@ -24,7 +25,7 @@
 import ArticleList from './components/article-list'
 import MoreActions from './components/more-actions'
 import { getChannels } from '@/api/channels.js'
-import { dislikeArticles } from '@/api/article'
+import { dislikeArticles, reportArticles } from '@/api/article'
 import eventBus from '@/utils/eventBus'
 export default {
   components: {
@@ -44,18 +45,22 @@ export default {
       this.show = true// 方法实现弹层显示与隐藏
       this.artId = artId
     },
-    async dislikeArticles () {
+    // 操作参数operateType
+    async dislikeOrReport (operateType, type) {
       try {
-        await dislikeArticles({ target: this.artId })// 发送请求  ?后端记录不再推送
+        operateType === 'dislike' ? await dislikeArticles({ target: this.artId }) : await reportArticles({ target: this.artId, type })// 发送请求  ?后端记录不再推送
         this.$lnotify({ type: 'success', message: '操作成功' })
         // 触发事件池 利用广播机制 通知tab 实现删除数据
         // activeIndex与channel的下标相对应 获取频道id
-        eventBus.$emit('delDislike', this.artId, this.channels[this.activeIndex].id)// 广播001
+        eventBus.$emit('delArticle', this.artId, this.channels[this.activeIndex].id)// 广播001
         this.show = false// 关闭弹层
       } catch (error) {
         this.$lnotify({ message: '操作失败' })// lnotify默认type类型为失败
       }
     },
+    // async reportArticles (type) {
+    //   await reportArticles({ target: this.artId, type })
+    // },
     async getChannels () {
       const res = await getChannels()
       this.channels = res.channels // 获取频道数据
