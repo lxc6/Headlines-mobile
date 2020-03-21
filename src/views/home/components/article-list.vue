@@ -31,7 +31,8 @@
                 <span>{{ item.comm_count }}评论</span>
                 <span>{{ item.pubdate | relTime }}</span>
                 <!-- 判断未登陆时按钮不存在 -->
-                <span class="close" v-if="user.token">
+                <!-- 触发父组件的自定义事件 -->
+                <span @click="$emit('showAction')" class="close" v-if="user.token">
                   <van-icon name="cross"></van-icon>
                 </span>
               </div>

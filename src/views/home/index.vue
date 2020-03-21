@@ -3,32 +3,43 @@
     <!-- tab标签页 -->
     <van-tabs>
       <van-tab :title="item.name" v-for="item in channels" :key="item.id">
-        <ArticleList :channel_id="item.id"></ArticleList>
+        <!-- 父组件的自定义事件 -->
+        <ArticleList @showAction="openAction" :channel_id="item.id"></ArticleList>
       </van-tab>
     </van-tabs>
-    <!-- 综合 -->
+    <!-- 综合方块 -->
     <span class="bar_btn">
       <van-icon name="wap-nav"></van-icon>
     </span>
+    <!-- 弹层 -->
+    <van-popup v-model="show" style="width:80%">
+      <MoreActions></MoreActions>
+    </van-popup>
   </div>
 </template>
 
 <script>
 import ArticleList from './components/article-list'
 import { getChannels } from '@/api/channels.js'
+import MoreActions from './components/more-actions'
 export default {
   components: {
-    ArticleList
+    ArticleList,
+    MoreActions
   },
   data () {
     return {
-      channels: []
+      channels: [],
+      show: false// 是否显示弹层
     }
   },
   methods: {
+    openAction () {
+      this.show = true
+    },
     async getChannels () {
       const res = await getChannels()
-      this.channels = res.channels// 获取频道数据
+      this.channels = res.channels // 获取频道数据
     }
   },
   created () {
@@ -53,13 +64,13 @@ export default {
       height: 2px;
     }
   }
-  /deep/ .van-tabs__content{
+  /deep/ .van-tabs__content {
     flex: 1;
     overflow: hidden;
   }
-  /deep/ .van-tab__pane{
+  /deep/ .van-tab__pane {
     height: 100%;
-    .scroll-wrapper{
+    .scroll-wrapper {
       height: 100%;
       overflow-y: auto;
     }
