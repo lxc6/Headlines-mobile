@@ -8,7 +8,7 @@
     </van-tabs>
     <!-- 综合 -->
     <span class="bar_btn">
-      <van-icon name="wap-nav" />
+      <van-icon name="wap-nav"></van-icon>
     </span>
   </div>
 </template>
@@ -47,20 +47,19 @@ export default {
     padding-right: 36px;
     .van-tab {
       line-height: 36px;
-      background: rgba(231, 11, 11, 0.1)
     }
     .van-tabs__line {
       background-color: #3296fa;
       height: 2px;
     }
   }
-  /deep/ .van-tabs__content {
+  /deep/ .van-tabs__content{
     flex: 1;
     overflow: hidden;
   }
-  /deep/ .van-tab__pane {
+  /deep/ .van-tab__pane{
     height: 100%;
-    .scroll-wrapper {
+    .scroll-wrapper{
       height: 100%;
       overflow-y: auto;
     }

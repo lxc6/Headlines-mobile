@@ -15,21 +15,23 @@
               <!-- 三图图片 -->
               <div class="img_box" v-if="item.cover.type === 3">
                 <!-- 图片组件用的是 vant的组件库中的图片组件 需要使用该组件 进行图片的懒加载 -->
-                <van-image class="w33" fit="cover" :src="item.cover.images[0]" />
-                <van-image class="w33" fit="cover" :src="item.cover.images[1]" />
-                <van-image class="w33" fit="cover" :src="item.cover.images[2]" />
+                <!-- lazy-load属性实现懒加载 -->
+                <van-image lazy-load class="w33" fit="cover" :src="item.cover.images[0]" />
+                <van-image lazy-load class="w33" fit="cover" :src="item.cover.images[1]" />
+                <van-image lazy-load class="w33" fit="cover" :src="item.cover.images[2]" />
               </div>
               <!-- 单图 暂时隐藏掉单图-->
                <div class="img_box" v-if="item.cover.type === 1">
                  <!-- 单图取第一个 -->
-                <van-image class="w100" fit="cover" :src="item.cover.images[0]" />
+                <van-image lazy-load class="w100" fit="cover" :src="item.cover.images[0]" />
               </div>
               <!-- 作者信息 -->
               <div class="info_box">
                 <span>{{ item.aut_name }}</span>
                 <span>{{ item.comm_count }}评论</span>
-                <span>{{ item.pubdate }}</span>
-                <span class="close">
+                <span>{{ item.pubdate | relTime }}</span>
+                <!-- 判断未登陆时按钮不存在 -->
+                <span class="close" v-if="user.token">
                   <van-icon name="cross"></van-icon>
                 </span>
               </div>
@@ -44,8 +46,12 @@
 
 <script>
 import { getArticles } from '@/api/article'
+import { mapState } from 'vuex'
 export default {
-  props: {
+  computed: {
+    ...mapState(['user'])// 映射出state中的user用于判断有无  × 按钮
+  },
+  props: { // 父子传值
     channel_id: {
       required: true,
       type: Number,
@@ -55,11 +61,11 @@ export default {
   data () {
     return {
       downLoading: false, // 是否处于开启了下拉刷新
-      upLoading: false, // 表示是否开启了上拉加载 默认值false
       finished: false, // 表示 是否已经完成所有数据的加载
-      articles: [],
+      upLoading: false, // 表示是否开启了上拉加载 默认值false
       successText: '', // 刷新成功时显示文本
-      timestamp: null// 定义一个时间戳属性 用来存储 历史时间戳
+      timestamp: null, // 定义一个时间戳属性 用来存储 历史时间戳
+      articles: []
     }
   },
   methods: {
@@ -74,7 +80,7 @@ export default {
       })
       // console.log(data)
       this.articles.push(...data.results)// 获取数据 追加到队尾
-      this.upLoading = false// 关闭加载状态
+      this.upLoading = false// 关闭加载状态 滚动条与底部距离小于 offset 时触发load事件
       if (data.pre_timestamp) { // 将历史时间戳传给 timestamp
         this.timestamp = data.pre_timestamp
       } else {
@@ -107,5 +113,45 @@ export default {
 }
 </script>
 
-<style>
+<style lang='less' scoped>
+.article_item {
+  h3 {
+    font-weight: normal;
+    line-height: 2;
+  }
+  .img_box {
+    display: flex;
+    justify-content: space-between;
+    .w33 {
+      width: 33%;
+      height: 90px;
+    }
+    .w100 {
+      width: 100%;
+      height: 180px;
+    }
+  }
+  .info_box {
+    color: #999;
+    line-height: 2;
+    position: relative;
+    font-size: 12px;
+    span {
+      padding-right: 10px;
+      &.close {
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        line-height: 12px;
+        height: 10px;
+        width: 16px;
+        text-align: center;
+        padding-right: 0;
+        font-size: 8px;
+        position: absolute;
+        right: 0;
+        top: 7px;
+      }
+    }
+  }
+}
 </style>

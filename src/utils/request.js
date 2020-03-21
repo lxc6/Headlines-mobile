@@ -9,7 +9,7 @@ import JSONbig from 'json-bigint'
 const instance = axios.create({
   // 构造参数
   baseURL: 'http://ttapi.research.itcast.cn/app/v1_0', // 请求地址常量
-  transformResponse: [data => (data ? JSONbig.parse(data) : {})] // 大数字处理
+  transformResponse: [data => data ? JSONbig.parse(data) : {}] // 大数字处理
 })
 // 请求拦截
 instance.interceptors.request.use(
