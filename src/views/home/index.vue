@@ -12,7 +12,7 @@
     <span class="bar_btn" @click="showChannelEdit=true">
       <van-icon name="wap-nav"></van-icon>
     </span>
-    <!-- 2.频道编辑组件 -->
+    <!-- 2.频道编辑组件 上拉菜单-->
     <van-action-sheet :round="false" title="编辑频道" v-model="showChannelEdit">
       <!-- 父组件自定义属性 -->
         <Channeledit
