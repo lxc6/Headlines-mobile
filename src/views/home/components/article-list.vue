@@ -65,7 +65,7 @@ export default {
     })
   },
   computed: {
-    ...mapState(['user'])// 映射出state中的user用于判断有无  × 按钮
+    ...mapState(['user'])// 映射出state中的user用于判断有无token => × 按钮
   },
   props: { // 父子传值
     channel_id: {

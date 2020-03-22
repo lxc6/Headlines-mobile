@@ -17,7 +17,7 @@ export default { // 导出一个默认对象
 }
 function sleep (time = 500) {
   return new Promise(function (resolve, reject) {
-    // 延迟
+    // 延迟 成功执行resolve() 失败reject()
     setTimeout(() => resolve(), time)
   })
 }

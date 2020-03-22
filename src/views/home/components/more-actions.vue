@@ -20,7 +20,7 @@ import { reports } from '@/api/constants'
 import eventBus from '@/utils/eventBus'
 export default {
   created () {
-    eventBus.$on('delArticle', () => (this.isReport = false))
+    eventBus.$on('delArticle', () => (this.isReport = false))// 还原状态
   },
   data () {
     return {
