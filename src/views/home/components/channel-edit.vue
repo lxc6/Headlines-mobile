@@ -12,9 +12,11 @@
           <!-- 循环渲染 -->
         <van-grid-item v-for="(item,index) in channels" :key="item.id">
             <!-- 触发自定义事件并传入参数 -->
-          <span @click="$emit('selectChannel', index)" class="f12">{{item.name}}</span>
+            <!-- 新建类 判断index 实现样式 -->
+          <span :class="{red:index===activeIndex}"
+           @click="$emit('selectChannel', index)" class="f12">{{item.name}}</span>
           <!-- 第一个不显示编辑图标 -->
-          <van-icon v-if="index!==0 && editing"  class="btn" name="cross"></van-icon>
+          <van-icon @click="$emit('delChannels',item.id)" v-if="index!==0 && editing"  class="btn" name="cross"></van-icon>
         </van-grid-item>
       </van-grid>
     </div>
@@ -22,9 +24,10 @@
     <div class="channel">
       <div class="tit">可选频道：</div>
       <van-grid class="van-hairline--left">
-        <van-grid-item v-for="channel in optionalChannels" :key="channel.id">
-          <span class="f12">{{channel.name}}</span>
-          <van-icon class="btn" name="plus"></van-icon>
+        <van-grid-item v-for="item in optionalChannels" :key="item.id">
+          <span  class="f12">{{item.name}}</span>
+          <!-- 触发自定义事件并传入参数 -->
+          <van-icon @click="$emit('addChannels',item)" class="btn" name="plus"></van-icon>
         </van-grid-item>
       </van-grid>
     </div>
@@ -39,6 +42,11 @@ export default {
       required: true,
       type: Array,
       default: () => []
+    },
+    activeIndex: {
+      required: true,
+      type: Number,
+      default: 0
     }
   },
   data () {
@@ -97,5 +105,8 @@ export default {
       color: red;
     }
   }
+}
+.red{
+    color: red;
 }
 </style>

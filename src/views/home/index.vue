@@ -15,7 +15,12 @@
     <!-- 2.频道编辑组件 -->
     <van-action-sheet :round="false" title="编辑频道" v-model="showChannelEdit">
       <!-- 父组件自定义属性 -->
-        <Channeledit @selectChannel="selectChannel" :channels="channels"></Channeledit>
+        <Channeledit
+        @addChannels="addChannels"
+        @delChannels="delChannels"
+        @selectChannel="selectChannel"
+        :activeIndex="activeIndex"
+        :channels="channels"></Channeledit>
     </van-action-sheet>
     <!-- 1.文章弹层组件 -->
     <van-popup v-model="show" style="width:80%">
@@ -29,7 +34,7 @@
 import ArticleList from './components/article-list'
 import MoreActions from './components/more-actions'
 import Channeledit from './components/channel-edit'
-import { getChannels } from '@/api/channels.js'
+import { getMyChannels, delChannels, addChannels } from '@/api/channels.js'
 import { dislikeArticles, reportArticles } from '@/api/article'
 import eventBus from '@/utils/eventBus'
 export default {
@@ -71,17 +76,38 @@ export default {
         this.$lnotify({ message: '操作失败' }) // lnotify默认type类型为失败
       }
     },
-    async getChannels () {
-      const res = await getChannels()
+    // 删除频道
+    async delChannels (id) {
+      try {
+        await delChannels(id)// 删除缓存
+        const index = this.channels.findIndex(item => item.id === id)
+        // 判断删除的是否在当前激活的索引的前面
+        if (index <= this.activeIndex) {
+          this.activeIndex = this.activeIndex - 1// 索引向前挪
+        }
+        this.channels.splice(index, 1)// 删除频道
+      } catch (error) {
+        this.$lnotify({ message: '删除频道失败' })
+      }
+    },
+    // 添加频道
+    async addChannels (channel) {
+      await addChannels(channel)// 添加缓存
+      this.channels.push(channel)// 添加频道
+    },
+    // 获取我的频道
+    async getMyChannels () {
+      const res = await getMyChannels()
       this.channels = res.channels // 获取频道数据
     },
+    // 选中频道
     selectChannel (index) {
       this.activeIndex = index // 将对应频道的索引 设置给当前激活的 标签
       this.showChannelEdit = false// 关闭弹层
     }
   },
   created () {
-    this.getChannels()
+    this.getMyChannels()
   }
 }
 </script>
