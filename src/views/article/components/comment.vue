@@ -27,12 +27,26 @@
         </div>
       </div>
     </van-list>
+    <!-- 发表评论 -->
     <div class="reply-container van-hairline--top">
       <van-field v-model="value" placeholder="写评论...">
         <van-loading v-if="submiting" slot="button" type="spinner" size="16px"></van-loading>
         <span class="submit" v-else slot="button">提交</span>
       </van-field>
     </div>
+    <!-- 评论回复模块 -->
+    <van-action-sheet v-model="showReply" :round="false" class="reply_dialog" title="回复评论">
+      <van-list v-model="reply.loading" :finished="reply.finished" finished-text="没有更多了">
+        <div class="item van-hairline--bottom van-hairline--top" v-for="index in 8" :key="index">
+          <van-image round width="1rem" height="1rem" fit="fill" src="https://img.yzcdn.cn/vant/cat.jpeg" />
+          <div class="info">
+            <p><span class="name">一阵清风</span></p>
+            <p>评论的内容，。。。。</p>
+            <p><span class="time">两天内</span></p>
+          </div>
+        </div>
+      </van-list>
+    </van-action-sheet>
   </div>
 
   <!-- 都不输入框 -->
@@ -43,16 +57,22 @@ import { getComments } from '@/api/article.js'
 export default {
   data () {
     return {
-      // 上拉加载中
-      loading: false,
-      // 全部加载完毕
-      finished: false,
-      // 输入的内容
-      value: '',
-      // 控制提交中状态数据
-      submiting: false,
+      // --评论
+      loading: false, // 上拉加载中
+      finished: false, // 全部加载完毕
+      value: '', // 输入的内容
+      submiting: false, // 控制提交中状态数据
       comments: [], // 评论列表
-      offset: null// 分页依据 为空 表示从第一页开始
+      offset: null, // 分页依据 为空 表示从第一页开始
+      // --评论回复
+      showReply: false,
+      reply: {
+        // 此对象专门放置 面板加载信息
+        loading: false, // 评论回复的加载状态
+        finished: false, // 评论回复是否加载完毕
+        offset: null, // 偏移量 作为评论回复分页加载的时候 查询的依据
+        list: [] // 存放 评论回复的数据
+      }
     }
   },
   methods: {
@@ -117,11 +137,36 @@ export default {
   bottom: 0;
   height: 44px;
   width: 100%;
+  border-top: 1px dashed #eee;
   background: #f5f5f5;
   z-index: 9999;
   .submit {
     font-size: 12px;
+    padding: 8px 15px;
     color: #3296fa;
+    color: snow;
+    background-color: #3296fa;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+}
+.reply_dialog {
+  height: 100%;
+  max-height: 100%;
+  display: flex;
+  overflow: hidden;
+  flex-direction: column;
+  .van-action-sheet__header {
+    background: #3296fa;
+    color: #fff;
+    .van-icon-close {
+      color: #fff;
+    }
+  }
+  .van-action-sheet__content{
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 10px 44px;
   }
 }
 </style>
