@@ -1,26 +1,28 @@
 <template>
   <div class="comment">
-    <van-list v-model="loading" :finished="finished" finished-text="没有更多了">
-      <div class="item van-hairline--bottom van-hairline--top" v-for="index in 5" :key="index">
+       <!-- 用户进入文章详情就加载 评论数据 @load -->
+    <van-list @load="onLoad" v-model="loading" :finished="finished" finished-text="没有更多了">
+      <div class="item van-hairline--bottom van-hairline--top" v-for="item in comments"
+      :key="item.aut_id.toString()">
         <van-image
           round
           width="1rem"
           height="1rem"
           fit="fill"
-          src="https://img.yzcdn.cn/vant/cat.jpeg"
+          :src="item.aut_photo"
         />
         <div class="info">
           <p>
-            <span class="name">一阵清风</span>
+            <span class="name">{{item.aut_name}}</span>
             <span style="float:right">
               <span class="van-icon van-icon-good-job-o zan"></span>
-              <span class="count">10</span>
+              <span class="count">{{item.like_count}}</span>
             </span>
           </p>
-          <p>评论的内容，。。。。</p>
+          <p>{{item.content}}</p>
           <p>
-            <span class="time">两天内</span>&nbsp;
-            <van-tag plain @click="showReply=true">4 回复</van-tag>
+            <span class="time">{{item.pubdate|relTime}}</span>&nbsp;
+            <van-tag plain @click="showReply=true">{{item.reply_count}} 回复</van-tag>
           </p>
         </div>
       </div>
@@ -37,6 +39,7 @@
 </template>
 
 <script>
+import { getComments } from '@/api/article.js'
 export default {
   data () {
     return {
@@ -47,8 +50,29 @@ export default {
       // 输入的内容
       value: '',
       // 控制提交中状态数据
-      submiting: false
+      submiting: false,
+      comments: [], // 评论列表
+      offset: null// 分页依据 为空 表示从第一页开始
     }
+  },
+  methods: {
+    async onLoad () {
+      const { artId } = this.$route.query
+      const data = await getComments({
+        type: 'a', // a(文章的评论)   c(评论的评论)
+        source: artId,
+        offset: this.offset// 赋值当前偏移量
+      })
+      this.comments.push(...data.results)// 向后追加数据
+      this.loading = false // 关闭正在上拉加载的状态
+      this.finished = data.end_id === data.last_id // 判断为最后一页时执行
+      if (!this.finished) { // 非最后一页
+        this.offset = data.last_id// 将当前最后id赋值给偏移用于加载下一页
+      }
+    }
+  },
+  created () {
+
   }
 }
 </script>
