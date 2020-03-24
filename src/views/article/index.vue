@@ -10,7 +10,8 @@
           <p class="name">{{articles.aut_name}}</p>
           <p class="time">{{articles.pubdate|relTime}}</p>
         </div>
-        <van-button round size="small" type="info">+ 关注</van-button>
+        <van-button  @click="follow()"
+         round size="small" type="info">{{articles.is_followed?'已关注':'+ 关注'}}</van-button>
       </div>
       <div class="content">
         <p>{{articles.content}}</p>
@@ -26,6 +27,7 @@
 
 <script>
 import { getArticleInfo } from '@/api/article'
+import { followUser, unfollowUser } from '@/api/user'
 export default {
   data () {
     return {
@@ -34,13 +36,29 @@ export default {
     }
   },
   methods: {
+    // 获取文章详情
     async getArticleInfo () {
       const { artId } = this.$route.query// 解构查询id
       this.articles = await getArticleInfo(artId)// 获取数据
+    },
+    // 关注与取消关注
+    async follow () {
+      try {
+        if (this.articles.is_followed) {
+        // 取消关注
+          await unfollowUser(this.articles.aut_id)
+        } else {
+        // 关注
+          await followUser({ target: this.articles.aut_id })
+        }
+        // 移动端 成功改变状态 pc端重新加载
+        this.articles.is_followed = !this.articles.is_followed
+      } catch (error) {
+        this.$lnotify({ mseeage: '操作失败' })
+      }
     }
   },
   created () {
-    // console.log(this.articles)
     this.getArticleInfo()
   }
 }
