@@ -51,3 +51,11 @@ export function searchArticle (params) {
     params
   })
 }
+/**
+ * 获取文章详情API
+ */
+export function getArticleInfo (artId) {
+  return request({
+    url: `/articles/${artId}`
+  })
+}

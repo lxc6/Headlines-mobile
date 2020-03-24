@@ -6,7 +6,8 @@
       <van-list finished-text="没有了" v-model="upLoading" :finished="finished" @load="onLoad">
         <!-- 循环内容 -->
         <van-cell-group>
-          <van-cell v-for="item in articles" :key="item.art_id.toString()" >
+          <!-- to跳转页面并query文章id -->
+          <van-cell :to="`/article?artId=${item.art_id.toString()}`" v-for="item in articles" :key="item.art_id.toString()" >
              <!-- 放置元素 文章列表的循环项  无图  单图  三图 -->
             <div class="article_item">
               <!-- 标题 -->
@@ -32,7 +33,8 @@
                 <span>{{ item.pubdate | relTime }}</span>
                 <!-- 判断未登陆时按钮不存在 -->
                 <!-- 触发父组件的自定义事件 需要传出点击的文章id实现后续操作-->
-                <span @click="$emit('showAction',item.art_id.toString())" class="close" v-if="user.token">
+                <!-- stop阻止冒泡 -->
+                <span @click.stop="$emit('showAction',item.art_id.toString())" class="close" v-if="user.token">
                   <van-icon name="cross"></van-icon>
                 </span>
               </div>

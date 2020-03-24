@@ -117,16 +117,19 @@ export default {
   height: 100%;
   display: flex;
   flex-direction: column;
+
   /deep/ .van-tabs__wrap {
     height: 36px;
     padding-right: 36px;
     .van-tab {
       line-height: 36px;
-      background-color: rgba(245, 88, 237, 0.1);
+      font-weight: bold;
+      background-color: rgba(200,200,200,.2);
     }
     .van-tabs__line {
       background-color: #3296fa;
-      height: 2px;
+      // background-color: yellow;
+      height: 3px;
     }
   }
   /deep/ .van-tabs__content {

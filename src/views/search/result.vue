@@ -6,7 +6,9 @@
     <van-list v-model="uploading" :finished="finished" finished-text="没有更多了" @load="onLoad">
       <van-cell-group>
         <!-- 放置搜索结果列表 实现上拉加载  注意id大数字问题-->
-        <van-cell v-for="item in articles" :key="item.art_id.toString()">
+        <!-- to搜索结果 跳转文章详情-->
+        <van-cell :to="`/article?artId=${item.art_id.toString()}`"
+        v-for="item in articles" :key="item.art_id.toString()">
           <div class="article_item">
             <h3 class="van-ellipsis">{{item.title}}</h3>
             <div class="img_box" v-if="item.cover.type===3">
