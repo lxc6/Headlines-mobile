@@ -3,7 +3,7 @@
     <!-- 头部导航栏 -->
     <van-nav-bar fixed
     v-if="$route.path!=='/user'"
-    title="黑马头条"
+    title="嗨友头条"
     right-text="搜索"
     @click-right="$router.push('/search')"
     ></van-nav-bar>

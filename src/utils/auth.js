@@ -16,5 +16,5 @@ export function getUser () {
 }
 // 删除token
 export function delUser () {
-  window.localStorage.removeItem(USER_TOKEN)
+  localStorage.removeItem(USER_TOKEN)
 }

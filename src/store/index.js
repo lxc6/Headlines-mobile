@@ -15,6 +15,9 @@ export default new Vuex.Store({
     clearUser (state) {
       state.user = {} // 清空state状态数据
       auth.delUser()// 清除缓存数据
+    },
+    updataPhoto (state, payload) {
+      state.photo = payload.photo
     }
   },
   actions: {

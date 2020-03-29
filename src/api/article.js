@@ -68,3 +68,13 @@ export function getComments (params) {
     params // type(是文章的的回复还是回复的回复)  source(来源id)  offset(偏移量 分页依据)
   })
 }
+/**
+ * 添加评论或者评论回复API
+ */
+export function commentsOrReply (data) {
+  return request({
+    url: '/comments',
+    method: 'post',
+    data // (target评论所属目标id --(content评论内容 --  (art_id文章id
+  })
+}

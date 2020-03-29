@@ -9,30 +9,30 @@
     >
       <div
         class="item van-hairline--bottom van-hairline--top"
-        v-for="item in comments"
-        :key="item.com_id.toString()"
+        v-for="comment in comments"
+        :key="comment.com_id.toString()"
       >
         <van-image
           round
           width="1rem"
           height="1rem"
           fit="fill"
-          :src="item.aut_photo"
+          :src="comment.aut_photo"
         />
         <div class="info">
           <p>
-            <span class="name">{{ item.aut_name }}</span>
+            <span class="name">{{ comment.aut_name }}</span>
             <span style="float:right">
               <span class="van-icon van-icon-good-job-o zan"></span>
-              <span class="count">{{ item.like_count }}</span>
+              <span class="count">{{ comment.like_count }}</span>
             </span>
           </p>
-          <p>{{ item.content }}</p>
+          <p>{{ comment.content }}</p>
           <p>
-            <span class="time">{{ item.pubdate | relTime }}</span
+            <span class="time">{{ comment.pubdate | relTime }}</span
             >&nbsp;
-            <van-tag plain @click="openReply(item.com_id.toString())"
-              >{{ item.reply_count }} 回复</van-tag
+            <van-tag plain @click="openReply(comment.com_id.toString())"
+              >{{ comment.reply_count }} 回复</van-tag
             >
           </p>
         </div>
@@ -47,7 +47,8 @@
           type="spinner"
           size="16px"
         ></van-loading>
-        <span class="submit" v-else slot="button">提交</span>
+        <!-- 发布评论 -->
+        <span class="submit" @click="submit()" v-else slot="button">提交</span>
       </van-field>
     </div>
     <!-- 评论回复模块 -->
@@ -56,9 +57,10 @@
       :round="false"
       class="reply_dialog"
       title="回复评论"
+      @closed="reply.commentId=null"
     >
       <van-list
-        @load="onPeply"
+        @load="getPeply"
         v-model="reply.loading"
         :finished="reply.finished"
         finished-text="没有更多了"
@@ -93,7 +95,7 @@
 </template>
 
 <script>
-import { getComments } from '@/api/article.js'
+import { getComments, commentsOrReply } from '@/api/article.js'
 export default {
   data () {
     return {
@@ -138,13 +140,14 @@ export default {
       this.showReply = true// 开启评论回复弹窗
       this.reply.commentId = commentId// 当前评论id
       // 清空原有数据
-      this.reply.loading = false // 评论回复的加载状态
-      this.reply.finished = false // 评论回复是否加载完毕
-      this.reply.offset = null // 偏移量 作为评论回复分页加载的时候 查询的依据
       this.reply.list = [] // 数据列表
+      this.reply.offset = null // 偏移量 作为评论回复分页加载的时候 查询的依据
+      this.reply.finished = false // 评论回复是否加载完毕
+      this.reply.loading = true // 主动打开加载状态 因为此时没有 主动检查
+      this.getPeply() // 弹出评论的评论的层时 主动的去请求一次数据
     },
     // 评论回复数据
-    async onPeply () {
+    async getPeply () {
       const data = await getComments({
         type: 'c', // a(文章的评论)   c(评论的评论)
         source: this.reply.commentId, // 获取谁的评论id进行回复
@@ -156,8 +159,52 @@ export default {
       if (!this.reply.finished) { // 非最后一页
         this.reply.offset = data.last_id// 将当前最后id赋值给偏移用于加载下一页
       }
+    },
+    // 添加评论与回复
+    async submit () {
+      // 1、判断用户是否登陆
+      if (this.$store.state.user.token) {
+        if (!this.value) return false// 为空不执行
+        this.submiting = true// 开启提交状态防止重复提交
+        await this.$sleep(800) // 强制休眠800毫秒
+        try {
+          const data = await commentsOrReply({
+            // 要么是文章id  要么是评论id
+            target: this.reply.commentId ? this.reply.commentId : this.$route.query.artId,
+            content: this.value,
+            // 回复文章 不需要传 ,回复评论需要传
+            art_id: this.reply.commentId ? this.$route.query.artId : null
+          })
+          if (this.reply.commentId) {
+            this.reply.list.unshift(data.new_obj)
+            const comment = this.comments.find(item => item.com_id.toString() === this.reply.commentId)
+            comment && comment.reply_count++// 如果匹配对应id就将 回复数量+1
+          } else {
+            // 评论回复
+            this.comments.unshift(data.new_obj)
+          }
+          this.value = ''// 清空评论内容
+        } catch (error) {
+          this.$gnotify({ message: '评论失败' })
+        }
+        this.submiting = false // 状态关闭
+      } else {
+        try {
+          await this.$dialog.confirm({
+            mseeage: '如果想要评论,你需要去登录'
+          })
+          // 跳转
+          this.$router.push({
+            path: '/login',
+            query: {
+              redirectUrl: this.$route.fullPath// 此地址是用户登录成功之后需要回到的页面
+            }
+          })
+        } catch (error) {
+          console.log('点击了取消')
+        }
+      }
     }
-
   },
   created () {
 

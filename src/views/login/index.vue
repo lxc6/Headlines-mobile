@@ -97,8 +97,8 @@ export default {
           const res = await login(this.loginForm)
           this.updataUser({ user: res })// 传入数据进行更新
           //  判断有 无参数 跳转
-          const { redirectURL } = this.$route.query // query查询参数 也就是 ?后边的参数表
-          this.$router.push(redirectURL || '/')// 短路实现按需跳转
+          const { redirectUrl } = this.$route.query // query查询参数 也就是 ?后边的参数表
+          this.$router.push(redirectUrl || '/')// 短路实现按需跳转
         } catch (error) {
           // this.$notify({ message: '手机号码或验证码错误', duration: 1000 })// vant内置消息通知
           this.$lnotify({ message: '手机号码或验证码错误' })// 自定义方法
