@@ -10,7 +10,10 @@
     <!-- 二级容器 -->
     <!-- 判断path为user时padding-top为0 -->
     <div class="my-wrapper" :class="{noTop: $route.path==='/user'}">
-      <router-view></router-view>
+    <!-- 缓存优化 keep-alive -->
+      <keep-alive>
+        <router-view></router-view>
+      </keep-alive>
     </div>
     <!-- 底部标签栏 -->
     <!-- route 开启路由模式 -->

@@ -5,7 +5,8 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    user: auth.getUser()
+    user: auth.getUser(),
+    photo: null // 用户头像
   },
   mutations: {
     updataUser (state, payload) {
