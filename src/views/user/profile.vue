@@ -23,7 +23,7 @@
       <!-- 内容 -->
       <!-- 1 本地相册选择图片 -->
       <!-- 2 拍照 -->
-       <van-cell is-link title="本地相册选择图片"></van-cell>
+       <van-cell is-link title="本地相册选择图片" @click="openFileDialog"></van-cell>
        <van-cell is-link title="拍照"></van-cell>
     </van-popup>
 
@@ -51,12 +51,16 @@
           @cancel="showBirthDay=false"
          />
     </van-popup>
+
+      <!-- 文件选择控件 -->
+    <input @change="upload" ref="myFile" type="file" style="display:none">
   </div>
 
 </template>
 
 <script>
 import dayjs from 'dayjs'
+import { getUserProfile, updatePhoto } from '@/api/user'
 export default {
   data () {
     return {
@@ -76,12 +80,17 @@ export default {
         // 放置个人资料信息
         name: '', // 用户昵称
         gender: 1, // 性别默认值
-        birthday: '', // 生日默认值
+        birthday: '2002-01-01', // 生日默认值
         photo: '' // 用户头像
       }
     }
   },
   methods: {
+    // 获取个人信息
+    async getUserProfile () {
+      this.user = await getUserProfile()
+    },
+    // 用户名
     btnName () {
       if (this.user.name.length < 1 || this.user.name.length > 7) {
         this.nameMsg = '用户昵称的长度应该是1-7的长度要求'
@@ -90,20 +99,37 @@ export default {
       this.nameMsg = '' // 直接将错误信息清空
       this.showName = false
     },
+    // 性别
     selectItem (item, index) {
       this.user.gender = index// 性别选择 index 0 男  1 女
       this.showGender = false
     },
+    // 生日
     showDate () {
       this.showBirthDay = true
       // 将当前的生日 设置到 选择日期的当前时间  将生日字符串 转化成Date对象 绑定到 日期组件上
       this.currentDate = new Date(this.user.birthday)
     },
+    // 点击完成按钮时触发
     confirmDate () {
       //  当前选择的生日 其实就是 currenDate
       this.user.birthday = dayjs(this.currentDate).format('YYYY-MM-DD')
       this.showBirthDay = false
+    },
+    upload () {
+      // 请求数据类型为formdata
+      const data = new FormData()
+      data.append('photo', this.$refs.myFile.files[0])// 第二个参数 是 选择的图片文件
+      const res = updatePhoto(data)// 发送请求
+      this.user.photo = res.photo// 设置数据
+      this.showPhoto = false // 关闭头像弹层
+    },
+    openFileDialog () {
+      this.$refs.myFile.click()// 触发input:file的click事件 触发事件就会弹出文件对话框
     }
+  },
+  created () {
+    this.getUserProfile()
   }
 }
 </script>
