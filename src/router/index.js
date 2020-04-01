@@ -22,7 +22,11 @@ const routes = [
     component: Layout, // 布局组件 一级路由
     children: [{
       path: '', // 如果path什么都不写 默认就是二级路由的默认组件
-      component: Home
+      component: Home,
+      // meta 属性 是route信息里面的一个属性 我们可以在这里存放一些数据 在路由切换的时候使用
+      meta: { // 通过这个标记 来决定 是否 采用 keep-alive来包裹 我们的一级路由容器
+        isAlive: true // 是否缓存组件实例
+      }
     }, {
       path: '/question',
       component: Question

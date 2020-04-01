@@ -2,7 +2,7 @@
   <div class="container">
     <!-- tab标签页 -->
     <!-- 默认绑定激活页签 -->
-    <van-tabs v-model="activeIndex">
+    <van-tabs v-model="activeIndex" @change="changeTab">
       <van-tab :title="item.name" v-for="item in channels" :key="item.id">
         <!-- 父组件的自定义事件 -->
         <ArticleList @showAction="openAction" :channel_id="item.id"></ArticleList>
@@ -53,6 +53,12 @@ export default {
     }
   },
   methods: {
+    // 切换页签事件
+    changeTab () {
+      // 切换页签时 我要广播一个消息  让对应的页签中的文章列表  去滚动 滚动条
+      // 广播中传出一个参数 传当前谁被激活了 传出当前激活索引的 id
+      eventBus.$emit('changeTab', this.channels[this.activeIndex].id)
+    },
     openAction (artId) {
       this.show = true // 方法实现弹层显示与隐藏
       this.artId = artId

@@ -1,5 +1,5 @@
 <template>
-  <div class="scroll-wrapper">
+  <div class="scroll-wrapper" @scroll="remember" ref="myScroll">
     <!-- 下拉㕞新  㕞新是对整个列表进行刷新所以要包裹list-->
     <van-pull-refresh v-model="downLoading" @refresh="onRefresh" :success-text="successText">
       <!-- 上拉加载 -->
@@ -65,6 +65,17 @@ export default {
         }
       }
     })
+    // 监听广播  滚动
+    eventBus.$on('changeTab', (id) => {
+      if (id === this.channel_id) {
+        // vue为异步渲染，要想等上一次渲染完毕后执行需要在this.$nextTick中
+        this.$nextTick(() => {
+          if (this.scrollTop && this.$refs.myScroll) {
+            this.$refs.myScroll.scrollTop = this.scrollTop// 滚动到固定位置
+          }
+        })
+      }
+    })
   },
   computed: {
     ...mapState(['user'])// 映射出state中的user用于判断有无token => × 按钮
@@ -83,10 +94,24 @@ export default {
       upLoading: false, // 表示是否开启了上拉加载 默认值false
       successText: '', // 刷新成功时显示文本
       timestamp: null, // 定义一个时间戳属性 用来存储 历史时间戳
-      articles: []
+      articles: [],
+      scrollTop: 0// 记录滚动的位置
+    }
+  },
+  // 实例唤醒时
+  activated () {
+    if (this.$refs.myScroll && this.scrollTop) { // 判断是否滚动
+      this.$refs.myScroll.scrollTop = this.scrollTop// 将记录的位置滚动到对应位置
     }
   },
   methods: {
+    // 记录滚动事件
+    remember (event) {
+      clearTimeout(this.timer)
+      this.timer = setTimeout(() => {
+        this.scrollTop = event.target.scrollTop// 记录滚动位置
+      }, 500)
+    },
     // 上拉加载
     async onLoad () {
       console.log('开始加载文章列表数据')
